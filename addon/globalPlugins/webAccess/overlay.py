@@ -1226,7 +1226,8 @@ class WebAccessObject(IAccessible):
 		if name is not None:
 			return name
 		name = super(WebAccessObject, self).name
-		name = self.__name = self.webAccess.getMutatedControlAttribute("name", name)
+		if self.webAccess.webModule:
+			name = self.__name = self.webAccess.getMutatedControlAttribute("name", name)
 		return name
 	
 	_cache_positionInfo = False
@@ -1240,16 +1241,17 @@ class WebAccessObject(IAccessible):
 		if info is not None:
 			return info
 		info = super(WebAccessObject, self).positionInfo
-		level = self.webAccess.getMutatedControlAttribute("level")
-		if level:
-			try:
-				level = int(level)
-			except Exception:
-				log.exception(
-					"Could not convert to int: level={}".format(level)
-				)
-			info["level"] = level
-		self.__positionInfo = info
+		if self.webAccess.webModule:
+			level = self.webAccess.getMutatedControlAttribute("level")
+			if level:
+				try:
+					level = int(level)
+				except Exception:
+					log.exception(
+						"Could not convert to int: level={}".format(level)
+					)
+					info["level"] = level
+					self.__positionInfo = info
 		return info
 	
 	_cache_role = False
@@ -1276,7 +1278,8 @@ class WebAccessObject(IAccessible):
 		if role is not None:
 			return role
 		role = super(WebAccessObject, self).role
-		role = self.__role = self.webAccess.getMutatedControlAttribute("role", role)
+		if self.webAccess.webModule:
+			role = self.__role = self.webAccess.getMutatedControlAttribute("role", role)
 		return role
 		
 	def _set_treeInterceptor(self, obj):
